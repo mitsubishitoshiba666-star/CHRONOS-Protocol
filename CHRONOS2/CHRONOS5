@@ -1,0 +1,36 @@
+import hashlib
+
+class ChronosSecurity:
+    def __init__(self, user_id):
+        self.user_id = user_id
+        self.pin_hash = None
+        self.biometric_data = None # ลายนิ้วมือ/ใบหน้า
+        self.iris_hash = None     # ม่านตา (ระดับสูงสุด)
+
+    def set_security(self, pin, bio, iris):
+        self.pin_hash = hashlib.sha256(pin.encode()).hexdigest()
+        self.biometric_data = bio # ในระบบจริงจะเป็น Encrypted Template
+        self.iris_hash = hashlib.sha256(iris.encode()).hexdigest()
+        print(f"SYSTEM: ตั้งค่าความปลอดภัย 3 ระดับให้ {self.user_id} สำเร็จ")
+
+    def verify_access(self, input_pin, input_bio, security_level="standard"):
+        # ระดับปกติ: PIN + ลายนิ้วมือ
+        if security_level == "standard":
+            if hashlib.sha256(input_pin.encode()).hexdigest() == self.pin_hash and input_bio == self.biometric_data:
+                return True
+        return False
+
+    def verify_high_security(self, input_iris):
+        # ระดับสูงสุด: สแกนม่านตา
+        if hashlib.sha256(input_iris.encode()).hexdigest() == self.iris_hash:
+            print("!!! ยืนยันตัวตนระดับสูงสุดสำเร็จ (Verified Human) !!!")
+            return True
+        return False
+
+# --- ทดสอบการใช้งาน ---
+security = ChronosSecurity("HUMAN_001")
+security.set_security("123456", "Bio_Finger_001", "Iris_Pattern_XYZ_789")
+
+# พยายามถอนเงินจำนวนมาก (ต้องการม่านตา)
+if security.verify_high_security("Iris_Pattern_XYZ_789"):
+    print("ACTION: อนุญาตให้โอนย้ายเวลาชีวิตมหาศาล")
