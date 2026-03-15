@@ -1,0 +1,20 @@
+class ChronosGlobalMonitor:
+    def __init__(self):
+        self.total_world_population = 8000000000 # สมมติประชากรโลก 8 พันล้านคน
+        self.avg_years_left = 50 # ค่าเฉลี่ยกลางเพื่อคำนวณอุปทานเบื้องต้น
+        
+    def get_realtime_max_supply(self):
+        # ดึงข้อมูลจาก World Population Oracle
+        current_pop = self.fetch_world_pop_oracle()
+        
+        # อุปทานสูงสุด (ในหน่วยชั่วโมง) = ประชากร x เวลาชีวิตเฉลี่ยที่เหลือ
+        max_supply_hr = current_pop * self.avg_years_left * 365 * 24
+        return max_supply_hr
+
+    def fetch_world_pop_oracle(self):
+        # ในระบบจริงจะเชื่อมต่อ API เช่น Worldometer หรือ UN Data
+        return self.total_world_population
+
+# แสดงผลอุปทานโลกปัจจุบัน
+monitor = ChronosGlobalMonitor()
+print(f"สภาวะปัจจุบัน: อุปทานสูงสุดของระบบ CHRONOS ทั่วโลกคือ {monitor.get_realtime_max_supply():,} ชั่วโมง")
