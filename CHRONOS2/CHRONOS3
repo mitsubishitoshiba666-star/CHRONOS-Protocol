@@ -1,0 +1,32 @@
+import requests # สมมติว่าใช้ดึงข้อมูลจาก API รัฐบาล
+import time
+
+class ChronosOracle:
+    def __init__(self, contract_address):
+        self.contract_address = contract_address
+        self.government_api_url = "https://api.registration.go.th" # URL สมมติ
+
+    def check_and_update(self, user_id):
+        # 1. ดึงข้อมูลจากฐานข้อมูลโลกจริง
+        # ในระบบจริงต้องมีการยืนยันความปลอดภัยสูงมาก (Encryption/Digital Signature)
+        response = requests.get(f"{self.government_api_url}/{user_id}")
+        data = response.json()
+        
+        status = data.get("status") # 'alive', 'deceased', or 'newborn'
+        birth_date = data.get("birth_date")
+
+        # 2. ส่งคำสั่งไปยัง Smart Contract ตามสถานะ
+        if status == "newborn":
+            self.mint_new_life_coin(user_id, birth_date)
+        elif status == "deceased":
+            self.activate_burn_protocol(user_id)
+
+    def mint_new_life_coin(self, user_id, birth_date):
+        print(f"ORACLE: ตรวจพบการเกิดใหม่ ID: {user_id}")
+        print(f"ACTION: สร้างเหรียญ CHRONOS เริ่มต้น 100 ปี (876,000 ชั่วโมง)")
+        # โค้ดส่งคำสั่งไปที่ Blockchain เพื่อ Mint เหรียญ
+
+    def activate_burn_protocol(self, user_id):
+        print(f"!!! ORACLE: ยืนยันการเสียชีวิต ID: {user_id} !!!")
+        print(f"ACTION: สั่ง Burn เหรียญในบัญชีทิ้งทั้งหมดทันที")
+        # โค้ดส่งคำสั่งไปที่ Blockchain เพื่อทำลายเหรียญ
