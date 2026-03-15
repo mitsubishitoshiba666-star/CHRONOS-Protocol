@@ -1,0 +1,53 @@
+#include <iostream>
+#include <map>
+
+// โครงสร้างข้อมูลใน Blockchain
+struct UserStatus {
+    long long balance;
+    bool isAlive;
+};
+
+class ChronosContract {
+private:
+    std::map<std::string, UserStatus> ledger;
+
+public:
+    // ฟังก์ชันเชื่อมต่อกับ Oracle (ต้องมีการตรวจสอบสิทธิ์ขั้นสูง)
+    void onOracleUpdate(std::string userId, std::string eventType) {
+        if (eventType == "BIRTH") {
+            // เมื่อเกิด: Mint เหรียญ 100 ปี (ประมาณ 3.15 พันล้านวินาที)
+            ledger[userId] = {3153600000, true};
+            std::cout << "[BLOCKCHAIN] New Life Registered: " << userId << " | 100 Years Allocated." << std::endl;
+        } 
+        else if (eventType == "DEATH") {
+            // เมื่อตาย: เผาทิ้งทันที
+            if (ledger.count(userId)) {
+                ledger[userId].balance = 0;
+                ledger[userId].isAlive = false;
+                std::cout << "[BLOCKCHAIN] Deceased Signal Received for: " << userId << " | Burning all assets..." << std::endl;
+            }
+        }
+    }
+
+    void showBalance(std::string userId) {
+        if (ledger.count(userId)) {
+            std::cout << "User: " << userId << " Balance: " << ledger[userId].balance << " seconds." << std::endl;
+        }
+    }
+};
+
+int main() {
+    ChronosContract contract;
+
+    // จำลองสัญญาณจาก Oracle ของรัฐบาล
+    contract.onOracleUpdate("HUMAN_999", "BIRTH");
+    contract.showBalance("HUMAN_999");
+
+    std::cout << "--- 50 Years Later ---" << std::endl;
+
+    // จำลองสัญญาณแจ้งตาย
+    contract.onOracleUpdate("HUMAN_999", "DEATH");
+    contract.showBalance("HUMAN_999");
+
+    return 0;
+}
