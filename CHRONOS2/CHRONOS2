@@ -1,0 +1,65 @@
+#include <iostream>
+#include <string>
+
+class ChronosAccount {
+private:
+    std::string userId;
+    long long balanceSeconds; // ใช้ long long เพื่อรองรับจำนวนวินาทีมหาศาล
+    bool isAlive;
+
+public:
+    ChronosAccount(std::string id, int currentAge) {
+        userId = id;
+        isAlive = true;
+        // คำนวณเวลาที่เหลือ (100 ปี - อายุจริง)
+        long long yearsLeft = 100 - currentAge;
+        balanceSeconds = yearsLeft * 365 * 24 * 60 * 60;
+    }
+
+    void transfer(long long amount, ChronosAccount &recipient) {
+        if (!isAlive) {
+            std::cout << "Account is frozen: User is deceased." << std::endl;
+            return;
+        }
+        if (balanceSeconds >= amount) {
+            balanceSeconds -= amount;
+            recipient.receive(amount);
+            std::cout << "Transfer Successful: " << amount << " seconds." << std::endl;
+        } else {
+            std::cout << "Incentive Error: Insufficient Time Balance." << std::endl;
+        }
+    }
+
+    void receive(long long amount) {
+        if (isAlive) balanceSeconds += amount;
+    }
+
+    // กฎเหล็ก Burn Protocol
+    void triggerBurnProtocol() {
+        isAlive = false;
+        balanceSeconds = 0;
+        std::cout << "!!! BURN PROTOCOL ACTIVATED FOR USER: " << userId << " !!!" << std::endl;
+    }
+
+    void displayBalance() {
+        long long hrs = balanceSeconds / 3600;
+        std::cout << "User: " << userId << " | Balance: " << hrs << " CHRONOS" << std::endl;
+    }
+};
+
+int main() {
+    ChronosAccount userA("CHRONOS_001", 20);
+    ChronosAccount userB("CHRONOS_002", 50);
+
+    userA.displayBalance();
+    userA.transfer(7200, userB); // โอน 2 ชั่วโมง
+    
+    userA.displayBalance();
+    userB.displayBalance();
+
+    // จำลองเหตุการณ์เสียชีวิต
+    userA.triggerBurnProtocol();
+    userA.displayBalance();
+
+    return 0;
+}
